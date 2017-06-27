@@ -39,7 +39,7 @@ fi
 
 # Check if directory exists, create it if not.
 
-if [ -d "/etc/iptables" ]; then
+if [ ! -d "/etc/iptables" ]; then
   mkdir -p /etc/iptables
 fi
 
