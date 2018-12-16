@@ -64,6 +64,21 @@ for x in "${countries[@]}"; do
 
 iptables -A INPUT -p tcp -m set --match-set $x src -j DROP; done
 
+echo 
+echo "#####################################################"
+echo "# Block all AWS public IPs, cause real people don't #"
+echo "# browse to your site or server from an AWS box.    #"
+echo "#####################################################"
+
+rm -f ipv4_aws.json
+wget https://ip-ranges.amazonaws.com/ip-ranges.json
+jq -r '.prefixes | .[].ip_prefix' < ip-ranges.json > ipv4_aws.json
+aws='ipv4_aws.json'
+awslines=`cat $aws`
+for line in $awslines ; do
+    /sbin/iptables -A INPUT -s $line -j DROP
+done
+
 # Stop script timer and output execution time
 script_end=`date +%s`
 script_runtime=$((script_end-script_start))
